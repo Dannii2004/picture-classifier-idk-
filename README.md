@@ -8,7 +8,7 @@ Python, uses transfer learning, tensorflow, keras...classifies a picture using M
 Make sure needed is installed:
 
 ## Getting Started
-git clone https://github.com/Dannii2004/image-classifier-unique.git
+git clone https://github.com/Dannii2004/picture-classifier-idkkkkk.git
 
 Python 3
 TensorFlow
