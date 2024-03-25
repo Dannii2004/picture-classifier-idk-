@@ -1,0 +1,48 @@
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras.applications import MobileNetV2
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input, decode_predictions
+import numpy as np
+import sys
+
+
+
+def load_custom_model():
+    base_model_unique = MobileNetV2(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
+    global_average_unique = tf.keras.layers.GlobalAveragePooling2D()(base_model_unique.output)
+    prediction_unique = tf.keras.layers.Dense(1000, activation='softmax')(global_average_unique)
+    custom_model = tf.keras.models.Model(inputs=base_model_unique.input, outputs=prediction_unique)
+    return custom_model
+
+
+
+
+
+def preprocess_custom_image(img_path):
+    img_unique = image.load_img(img_path, target_size=(224, 224))
+    img_array_unique = image.img_to_array(img_unique)
+    img_array_unique = np.expand_dims(img_array_unique, axis=0)
+    return preprocess_input(img_array_unique)
+
+
+def classify_custom_image(model_unique, img_path):
+    preprocessed_custom_img = preprocess_custom_image(img_path)
+    predictions_unique = model_unique.predict(preprocessed_custom_img)
+    decoded_predictions_unique = decode_predictions(predictions_unique, top=3)[0]
+    return decoded_predictions_unique
+
+
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python image_classifier_unique.py <image_path>")
+        sys.exit(1)
+
+    image_path_unique = sys.argv[1]
+    custom_model_instance = load_custom_model()
+    predictions_result = classify_custom_image(custom_model_instance, image_path_unique)
+    print("Predictions:")
+    for pred_unique in predictions_result:
+        print(f"{pred_unique[1]}: {pred_unique[2]*100:.2f}%")
